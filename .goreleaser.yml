@@ -1,0 +1,19 @@
+builds:
+  - main: ./main.go
+    binary: gconn
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - 386
+archive:
+  format: zip
+  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+  files:
+    - README.md
+release:
+  github:
+    owner: litencatt
+    name: go-connection-checker
