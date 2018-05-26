@@ -55,6 +55,13 @@ func traceroute(host string) {
 	fmt.Println(string(out))
 }
 
+func openssl(host string) {
+	cmd := exec.Command("openssl", "s_client", "-connect", host+":443")
+	fmt.Println(cmd.Args)
+	out, _ := cmd.CombinedOutput()
+	fmt.Println(string(out))
+}
+
 func main() {
 	flag.Parse()
 	host := flag.Arg(0)
@@ -64,4 +71,5 @@ func main() {
 	nc(host, 80)
 	nc(host, 443)
 	curl(host)
+	openssl(host)
 }
