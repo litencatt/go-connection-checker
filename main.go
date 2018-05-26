@@ -66,10 +66,15 @@ func main() {
 	flag.Parse()
 	host := flag.Arg(0)
 
+	fmt.Println("Check L3 layer connection.")
+	fmt.Println("")
 	ping(host)
 	//traceroute(host)
+
+	fmt.Println("Check L4-7 layer connection.")
 	nc(host, 80)
 	nc(host, 443)
+
 	curl(host)
 	openssl(host)
 }
