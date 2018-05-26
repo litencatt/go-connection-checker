@@ -73,8 +73,8 @@ func main() {
 
 	fmt.Println("Check L4-7 layer connection.")
 	nc(host, 80)
-	nc(host, 443)
-
 	curl(host)
+
+	nc(host, 443)
 	openssl(host)
 }
