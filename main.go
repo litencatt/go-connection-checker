@@ -9,14 +9,23 @@ import (
 )
 
 func ping(host string) {
-	out, _ := exec.Command("ping", host, "-c 5").Output()
-	fmt.Println("ping -c 5 " + host)
-	fmt.Println(string(out))
+	cmd := exec.Command("ping", host, "-c 5")
+	fmt.Println(cmd.Args)
+	out, _ := cmd.CombinedOutput()
+	if strings.Contains(string(out), "5 packets received") {
+		arr := strings.Split(string(out), "\n")
+		fmt.Println(arr[len(arr)-3] + "\n" + arr[len(arr)-2])
+	} else {
+		fmt.Println(string(out))
+	}
+
+	fmt.Println("")
 }
 
 func curl(host string) {
-	out, _ := exec.Command("curl", "https://"+host, "-I").Output()
-	fmt.Println("curl -I https://" + host)
+	cmd := exec.Command("curl", "https://"+host, "-I")
+	fmt.Println(cmd.Args)
+	out, _ := cmd.CombinedOutput()
 	if strings.Contains(string(out), "200 OK") {
 		arr := strings.Split(string(out), "\n")
 		fmt.Println(arr[0])
@@ -27,8 +36,9 @@ func curl(host string) {
 }
 
 func nc(host string, port int) {
-	out, _ := exec.Command("nc", host, strconv.Itoa(port), "-vz").CombinedOutput()
-	fmt.Println("nc -vz " + host + strconv.Itoa(port))
+	cmd := exec.Command("nc", host, strconv.Itoa(port), "-vz")
+	fmt.Println(cmd.Args)
+	out, _ := cmd.CombinedOutput()
 	if strings.Contains(string(out), "succeeded!") {
 		arr := strings.Split(string(out), "\n")
 		fmt.Println(arr[len(arr)-2])
@@ -39,8 +49,9 @@ func nc(host string, port int) {
 }
 
 func traceroute(host string) {
-	out, _ := exec.Command("traceroute", host).Output()
-	fmt.Println("traceroute " + host)
+	cmd := exec.Command("traceroute", host)
+	fmt.Println(cmd.Args)
+	out, _ := cmd.CombinedOutput()
 	fmt.Println(string(out))
 }
 
