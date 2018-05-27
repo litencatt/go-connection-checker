@@ -3,53 +3,47 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/mattn/go-pipeline"
 )
 
 func ping(host string) {
-	execCommand(
-		[]string{"ping", host, "-c 5"},
-		"5 packets received",
-	)
-
+	c1 := []string{"ping", host, "-c 5"}
+	c2 := []string{"grep", "received"}
+	execCommand(c1, c2)
 }
 
 func curl(host string) {
-	execCommand(
-		[]string{"curl", "https://" + host, "-s", "-I"},
-		"",
-	)
+	c1 := []string{"curl", "https://" + host, "-s", "-I"}
+	c2 := []string{"grep", "200 OK"}
+	execCommand(c1, c2)
 }
 
 func nc(host string, port int) {
-	execCommand(
-		[]string{"nc", host, strconv.Itoa(port), "-vz"},
-		"succeeded!",
-	)
+	c1 := []string{"nc", host, strconv.Itoa(port), "-vz"}
+	c2 := []string{"grep", "succeeded!"}
+	execCommand(c1, c2)
 }
 
 func traceroute(host string) {
-	execCommand([]string{"traceroute", host}, "")
+	c1 := []string{"traceroute", host}
+	execCommand(c1)
 }
 
 func openssl(host string) {
-	execCommand([]string{"openssl", "s_client", "-connect", host + ":443"}, "")
+	c1 := []string{"openssl", "s_client", "-connect", host + ":443"}
+	execCommand(c1)
 }
 
-func execCommand(command []string, check string) {
-	cmd := exec.Command(command[0], command[1:]...)
-	fmt.Println(cmd.Args)
+func execCommand(c ...[]string) {
 
-	out, _ := cmd.CombinedOutput()
-	if check != "" && strings.Contains(string(out), check) {
-		arr := strings.Split(string(out), "\n")
-		fmt.Println(arr[len(arr)-2])
-	} else {
-		fmt.Println(string(out))
+	out, err := pipeline.Output(c...)
+	if err != nil {
+		fmt.Println(err)
 	}
-	fmt.Println("")
+	fmt.Println(string(out))
 }
 
 func main() {
