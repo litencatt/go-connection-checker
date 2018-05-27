@@ -9,57 +9,47 @@ import (
 )
 
 func ping(host string) {
-	cmd := exec.Command("ping", host, "-c 5")
-	fmt.Println(cmd.Args)
-	out, _ := cmd.CombinedOutput()
-	if strings.Contains(string(out), "5 packets received") {
-		arr := strings.Split(string(out), "\n")
-		fmt.Println(arr[len(arr)-3] + "\n" + arr[len(arr)-2])
-	} else {
-		fmt.Println(string(out))
-	}
+	execCommand(
+		[]string{"ping", host, "-c 5"},
+		"5 packets received",
+	)
 
-	fmt.Println("")
 }
 
 func curl(host string) {
-	cmd := exec.Command("curl", "https://"+host, "-I")
-	fmt.Println(cmd.Args)
-	out, _ := cmd.CombinedOutput()
-	if strings.Contains(string(out), "200 OK") {
-		arr := strings.Split(string(out), "\n")
-		fmt.Println(arr[0])
-	} else {
-		fmt.Println(string(out))
-	}
-	fmt.Println("")
+	execCommand(
+		[]string{"curl", "https://" + host, "-s", "-I"},
+		"",
+	)
 }
 
 func nc(host string, port int) {
-	cmd := exec.Command("nc", host, strconv.Itoa(port), "-vz")
+	execCommand(
+		[]string{"nc", host, strconv.Itoa(port), "-vz"},
+		"succeeded!",
+	)
+}
+
+func traceroute(host string) {
+	execCommand([]string{"traceroute", host}, "")
+}
+
+func openssl(host string) {
+	execCommand([]string{"openssl", "s_client", "-connect", host + ":443"}, "")
+}
+
+func execCommand(command []string, check string) {
+	cmd := exec.Command(command[0], command[1:]...)
 	fmt.Println(cmd.Args)
+
 	out, _ := cmd.CombinedOutput()
-	if strings.Contains(string(out), "succeeded!") {
+	if check != "" && strings.Contains(string(out), check) {
 		arr := strings.Split(string(out), "\n")
 		fmt.Println(arr[len(arr)-2])
 	} else {
 		fmt.Println(string(out))
 	}
 	fmt.Println("")
-}
-
-func traceroute(host string) {
-	cmd := exec.Command("traceroute", host)
-	fmt.Println(cmd.Args)
-	out, _ := cmd.CombinedOutput()
-	fmt.Println(string(out))
-}
-
-func openssl(host string) {
-	cmd := exec.Command("openssl", "s_client", "-connect", host+":443")
-	fmt.Println(cmd.Args)
-	out, _ := cmd.CombinedOutput()
-	fmt.Println(string(out))
 }
 
 func main() {
