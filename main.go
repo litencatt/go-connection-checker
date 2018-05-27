@@ -37,7 +37,20 @@ func openssl(host string) {
 	execCommand(c1)
 }
 
+func showCommand(c ...[]string) {
+	showCommands := ""
+	for _, cmd := range c {
+		if showCommands == "" {
+			showCommands += strings.Join(cmd, " ")
+		} else {
+			showCommands += " | " + strings.Join(cmd, " ")
+		}
+	}
+	fmt.Println(showCommands)
+}
+
 func execCommand(c ...[]string) {
+	showCommand(c...)
 
 	out, err := pipeline.Output(c...)
 	if err != nil {
